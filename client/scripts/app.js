@@ -1,15 +1,22 @@
 var app;
 $(function() {
   app = {
+    server: 'https://api.parse.com/1/classes/chatterbox',
+
     init: function() {
       app.fetch();
     },
 
-    createMessage: function(text, username){
+    clearMessages: function() {
+      $('#chats').empty();
+    },
+
+    addMessage: function(text){
+      var username = window.location.search.match(/username=([^&]+)/)[1];
       var message = {
-        // username: username,
-        text: text
-        // roomname: '4chan'
+      username: username,
+      text: text,
+      roomname: roomname
       };
 
       app.send(message);
@@ -18,7 +25,7 @@ $(function() {
 
     send: function(messageObject) {
       $.ajax({
-        url: 'https://api.parse.com/1/classes/chatterbox',
+        url: app.server,
         type: 'POST',
         data: JSON.stringify(messageObject),
         contentType: 'application/json',
@@ -40,7 +47,7 @@ $(function() {
 
     fetch: function() {
       $.ajax({
-        url: 'https://api.parse.com/1/classes/chatterbox',
+        url: app.server,
         type: 'GET',
         contentType: 'application/json',
         order: '-createdAt',
@@ -56,34 +63,17 @@ $(function() {
     },
 
     displayMessage: function(newMessages) {
-      //message is an array??
+      app.clearMessages();
       _.each(newMessages.results, function(message) {
-          $('.messageContainer').append('<span>' + _.escape(message.text) + '<span>' + '<br>');
+          $('#chats').append('<span>' + _.escape(message.username) + ': ' + _.escape(message.text) + '<span>' + '<br>');
         });
+    },
 
+    addRoom: function() {
+      var roomName = $('#roomInput').val();
+      $('#Chatrooms').append('<option class="rooms">' + roomName + '</option>' );
     }
-    // addOrCreateRoom: function() {
-
-    // }
   }
-    app.init.bind(app);
-    app.init();
-    var context = this;
 
-    setInterval(function(){
-      app.fetch.call(context);
-    }, 8000 );
-
-    $('#submitButton').on('click', function(){
-      var message = $('#inputBox').val();
-      app.createMessage(message);
-    });
-
-    $('#inputBox').keypress(function(key){
-      if(key.which === 13) {
-        var message = $('#inputBox').val();
-        app.createMessage(message);
-      }
-    })
 }());
 
