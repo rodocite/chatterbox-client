@@ -7,6 +7,7 @@
 
     <!-- dependencies -->
     <script src="bower_components/jquery/jquery.min.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
     <!-- your scripts -->
     <script src="env/config.js"></script>
     <script src="scripts/app.js"></script>
@@ -15,6 +16,54 @@
     <div id="main">
       <h1>chatterbox</h1>
       <!-- Your HTML goes here! -->
+      <form>
+        <select name="Chatrooms" id="Chatrooms">
+          <optgroup label="Chatrooms">
+            <option value="randomRoom" class="rooms">random</option>
+          </optgroup>
+        </select>
+        <button type="button" value="submit" id="createRoomButton">Create Room</button>
+        <input type="text" name="roomInput" id="roomInput" placeholder="Create Room">
+
+        <input type="text" name="messageInput" id="messageInput" placeholder="Type chat message here">
+        <button type="button" value="submit" id="submitButton">Send</button>
+        <button type="button" value="clear" id="clearButton">Clear</button>
+
+      </form>
+      <div id="chats"></div>
     </div>
+    <!-- -->
+    <script>
+      app.init.bind(app);
+      app.init();
+
+      setInterval(function(){
+        app.fetch.call(app);
+      }, 8000);
+
+      $('#submitButton').on('click', function(){
+        var message = $('#messageInput').val();
+        app.addMessage(message);
+        // location.reload();
+      });
+
+      $('#messageInput').keypress(function(key){
+        if(key.which === 13) {
+          var message = $('#messageInput').val();
+          app.addMessage(message);
+          // return false;
+        }
+      });
+
+      $('#clearButton').on('click', function() {
+        app.clearMessages();
+      });
+
+      $('#createRoomButton').on('click', function(){
+        app.addRoom();
+      });
+
+    </script>
+    <!-- -->
   </body>
 </html>
